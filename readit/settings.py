@@ -108,6 +108,7 @@ elif DJANGO_MODE == 'staging':
     }
 elif DJANGO_MODE == 'production':
     import dj_database_url
+    DATABASES = {}
     DATABASES['default'] =  dj_database_url.config()
 
 

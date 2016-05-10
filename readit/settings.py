@@ -34,7 +34,6 @@ else:
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -85,7 +84,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'readit.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 if DJANGO_MODE == 'local':
@@ -108,10 +106,9 @@ elif DJANGO_MODE == 'staging':
     }
 elif DJANGO_MODE == 'production':
     import dj_database_url
+
     DATABASES = {}
-    DATABASES['default'] =  dj_database_url.config()
-
-
+    DATABASES['default'] = dj_database_url.config()
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -131,7 +128,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
@@ -145,7 +141,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
@@ -157,3 +152,46 @@ STATICFILES_DIRS = (
 )
 
 LOGIN_URL = '/login/'
+
+# LOGGING
+# See: https://docs.djangoproject.com/en/dev/ref/settings/#logging
+# A sample logging configuration. The only tangible logging
+# performed by this configuration is to send an email to
+# the site admins on every HTTP 500 error when DEBUG=False.
+# See http://docs.djangoproject.com/en/dev/topics/logging for
+# more details on how to customize your logging configuration.
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
+
+ADMINS = (
+    ('Nael Shaban', 'nael.shaban@gmail.com'),
+)
+
+if DJANGO_MODE == 'production':
+    EMAIL_HOST = 'smtp.sendgrid.net',
+    EMAIL_HOST_USER = os.getenv('SENDGRID_USERNAME')
+    EMAIL_HOST_PASSWORD = os.getenv('SENDGRID_PASSWORD')
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
